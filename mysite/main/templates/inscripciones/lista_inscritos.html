@@ -1,0 +1,90 @@
+{% extends 'main/principal.html' %}
+{% block titulo %} Inscripcion de Estudiantes {% endblock titulo%}
+
+{% block content %}
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+<center><h3 id="tittle_pagina">Lista de Estudiantes Registrados {{ cursos }} </h3></center>
+
+<div>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{message.tags}}"{% endif %}>
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Import: {% endif %}
+            {{ message }}
+
+        </li>
+        {% endfor%}
+    </ul>
+    {% endif %}
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr class="text-center">    
+            <th>Estudiante</th>
+            <th>Edad</th>   
+            <th>Fecha de Inscripcion</th>    
+            <th>Curso Inscrito</th>    
+            <th>Precio</th>    
+            <th>Opciones</th>    
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for est in inscritos_curso %}
+        <tr class="text-center">    
+            <td>{{est.Nombres}} {{est.Apellidos}}</td> 
+            <td class="edad_promedio text-center">{{est.edad}}</td>       
+            <td class="text-center">{{est.fecha_inscripcion}}</td>    
+            <td class="text-center">{{est.curso}}</td>
+            <td class="fila_costo text-center">{{est.costo_total}}</td>
+            <td class="text-center"><a href="{% url 'inscripciones:editar_inscripcion' est.id %}" class="btn btn-info">Editar</a> |
+            <a href="{% url 'inscripciones:eliminar_inscripcion' est.id %}" class="btn btn-danger">Eliminar</a></td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+
+
+</table>
+
+<h7>Total Recaudado: <span id="totaljs"></span></h7><br>
+<h7>Edad Promedio Frond: <span id="totaldeEdad"></span> Años</h7>
+<h4>Edad Promedio Back: {% widthratio suma_edad.edad__sum div_edad.edad__count 1 %} años</h4>
+
+
+<script>
+var suma_costos = document.querySelectorAll(".fila_costo");
+    var total = 0;
+    suma_costos.forEach(function (e) {
+        var suma = parseFloat(e.textContent);
+        total += suma;
+    });
+    var suma = document.querySelectorAll("#totaljs");
+    suma[0].innerHTML =total.toFixed(2)
+
+</script>
+<!--Sirve para calcular la media de edades de los Estudiante-->    
+<script>
+    var sumaFilas = document.querySelectorAll(".edad_promedio");
+    var total = 0;
+    var con = 0;
+    
+    sumaFilas.forEach(function(e){
+
+        var suma = parseFloat(e.textContent);
+        total += suma;
+        console.log(total);
+        console.log(sumaFilas.length)
+    });
+
+    resultado = (total/sumaFilas.length)
+    console.log(resultado)
+    var suma = document.querySelectorAll("#totaldeEdad");
+    suma[0].innerHTML = resultado.toFixed(1)
+</script>
+
+{% endblock content %}
